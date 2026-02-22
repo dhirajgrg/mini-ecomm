@@ -4,33 +4,34 @@ import mongoose from "mongoose";
 //THIRD-PARTY MODULE
 import bcrypt from "bcryptjs";
 
-
 //SCHEMA DEFINE
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    select: false,
-  },
-  role: {
-    type: String,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
-      enum: ["USER", "ADMIN", "VENDOR"],
-      default: "USER",
+      enum: ["customer", "vendor", "admin"],
+      default: "customer",
     },
-    default: "USER",
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-});
+  { timestamps: true }
+);
 
 
 //HASHING PASSWORD BEFORE SAVING TO DATABASE

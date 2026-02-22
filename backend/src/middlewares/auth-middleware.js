@@ -4,6 +4,7 @@ import userModel from "../models/user-model.js";
 import { tokenVerify } from "../utils/jwt-util.js";
 import catchAsync from "../utils/catchAsync-util.js";
 
+//INPUT-VALIDATOR-AUTH
 export const validateAuth = [
   // 1. Check Email
   body("email")
@@ -34,6 +35,7 @@ export const validateAuth = [
   },
 ];
 
+//PROTECTED ROUTE
 export const protect = catchAsync(async (req, res, next) => {
   let token;
 
@@ -65,3 +67,13 @@ export const protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+//ROLE-BASED-ACCESS
+export const allowRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      next(new AppError("You do not have permission to perform this action", 403));
+    }
+    next();
+  };
+};

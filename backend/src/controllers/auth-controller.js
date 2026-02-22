@@ -4,10 +4,9 @@ import catchAsync from "../utils/catchAsync-util.js";
 import AppError from "../utils/appError-util.js";
 import { tokenGenerator } from "../utils/jwt-util.js";
 
-
 //REGISTER NEW-USER
 export const signupUser = catchAsync(async (req, res, next) => {
-  const { email, password, role } = req.body;
+  const { name, email, password, role } = req.body;
   if (!email || !password)
     next(new AppError(`Please provide email or password`, 400));
 
@@ -18,9 +17,10 @@ export const signupUser = catchAsync(async (req, res, next) => {
 
   //CREATE NEW USER IN DB
   const newUser = await userModel.create({
+    name,
     email,
     password,
-    role: role || "USER",
+    role: role || "customer",
   });
 
   //TOKEN GENERATE FROM JWT
@@ -45,7 +45,6 @@ export const signupUser = catchAsync(async (req, res, next) => {
   });
 });
 
-
 //LOGIN USER
 export const signinUser = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -59,10 +58,9 @@ export const signinUser = catchAsync(async (req, res, next) => {
       new AppError(`User not register with this email please register!!`, 400),
     );
 
-    //TOKEN GENERATE FROM JWT
+  //TOKEN GENERATE FROM JWT
   const token = tokenGenerator({ id: user._id, role: user.role });
   if (!token) next(new AppError(`unable to create token`, 401));
-
 
   //SEND TOKEN VIA COOKIE
   res.cookie("token", token, {
@@ -82,7 +80,6 @@ export const signinUser = catchAsync(async (req, res, next) => {
   });
 });
 
-
 //LOGOUT USER
 export const logoutUser = catchAsync(async (req, res, next) => {
   //FIND USER AS FROM PROTECT( req.user.id)
@@ -98,5 +95,20 @@ export const logoutUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Logged out successfully 👋",
+  });
+});
+
+//GET USER CURRENTLY LOGGED IN
+export const getMe = catchAsync(async (req, res, next) => {
+  const currentUser = await userModel.findById(req.user.id);
+
+  if (!currentUser) next(new AppError(`User not found with this id`, 404));
+
+  res.status(200).json({
+    status: "success",
+    message: "User details fetched successfully",
+    data: {
+      user:currentUser,
+    },
   });
 });
