@@ -58,6 +58,9 @@ export const signinUser = catchAsync(async (req, res, next) => {
       new AppError(`User not register with this email please register!!`, 400),
     );
 
+  user.isActive = true;
+  await user.save();
+
   //TOKEN GENERATE FROM JWT
   const token = tokenGenerator({ id: user._id, role: user.role });
   if (!token) next(new AppError(`unable to create token`, 401));
@@ -108,7 +111,7 @@ export const getMe = catchAsync(async (req, res, next) => {
     status: "success",
     message: "User details fetched successfully",
     data: {
-      user:currentUser,
+      user: currentUser,
     },
   });
 });

@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
+    storeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Store",
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -11,15 +16,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    stock: {
-      type: Number,
-      required: true,
-    },
-    store: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Store",
-      required: true,
-    },
+
     status: {
       type: String,
       enum: ["active", "inactive"],

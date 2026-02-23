@@ -11,7 +11,9 @@ import cookieParser from "cookie-parser";
 import AppError from "./utils/appError-util.js";
 import globalErrorHandler from "./controllers/globalError-controller.js";
 import esewaRoutes from "./routes/esewa-route.js";
-import authRoutes from "./routes/auth-routes.js";
+import authRoutes from "./routes/auth-route.js";
+import storeRoutes from "./routes/store-route.js";
+import productRoutes from "./routes/product-route.js"
 
 //MIDDLEWARES
 app.use(morgan("dev"));
@@ -25,7 +27,9 @@ app.get("/", (req, res) => {
 });
 
 //MAIN ROUTES
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auths", authRoutes);
+app.use("/api/v1/stores", storeRoutes);
+app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/esewa", esewaRoutes);
 
 
