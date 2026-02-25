@@ -1,4 +1,6 @@
 import express from "express";
+import { protect, allowRoles } from "../middlewares/auth-middleware.js";
+import { validateStore } from "../middlewares/validate-middleware.js";
 import {
   createStore,
   getMyStores,
@@ -6,12 +8,11 @@ import {
   approveStore,
   suspendStore,
 } from "../controllers/store-controller.js";
-import { protect, allowRoles } from "../middlewares/auth-middleware.js";
 
 const router = express.Router();
 
 // Vendor routes
-router.post("/", protect, allowRoles("vendor"), createStore);
+router.post("/", protect, validateStore, allowRoles("vendor"), createStore);
 router.get("/my", protect, allowRoles("vendor"), getMyStores);
 
 // Admin routes

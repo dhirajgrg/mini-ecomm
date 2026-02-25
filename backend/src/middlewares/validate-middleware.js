@@ -1,4 +1,5 @@
 import { body, validationResult } from "express-validator";
+import AppError from "../utils/appError-util.js";
 
 // VALIDATION MIDDLEWARES FOR REGISTER
 export const validateSignup= [

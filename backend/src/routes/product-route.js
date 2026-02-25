@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 
+import { validateProduct } from "../middlewares/validate-middleware.js";
 import { protect, allowRoles } from "../middlewares/auth-middleware.js";
 import {
   createProduct,
@@ -13,7 +14,7 @@ import {
 } from "../controllers/product-controller.js";
 
 // Protected routes for vendors
-router.post("/", protect, allowRoles("vendor"), createProduct);
+router.post("/", protect, validateProduct, allowRoles("vendor"), createProduct);
 router.get("/my-products", protect, allowRoles("vendor"), getMyProducts);
 router.put("/:id", protect, allowRoles("vendor"), updateProduct);
 router.delete("/:id", protect, allowRoles("admin", "vendor"), deleteProduct);

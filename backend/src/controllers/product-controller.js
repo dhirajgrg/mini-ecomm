@@ -60,7 +60,11 @@ export const getMyProducts = catchAsync(async (req, res, next) => {
     return next(new AppError("Store not found for the vendor", 404));
   }
   const products = await productModel.find({ storeId: store._id });
-  res.status(200).json({
+
+  if (products.length === 0 || !products) {
+    return next(new AppError("No products found for this vendor", 404));
+  }
+  return res.status(200).json({
     status: "success",
     data: {
       products,
