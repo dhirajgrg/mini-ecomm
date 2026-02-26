@@ -1,6 +1,6 @@
 //THIRD-PARTY MODULES
 import crypto from "crypto";
-import esewaSignatureGenerator from "../config/signatureGenerator.js";
+// import esewaSignatureGenerator from "../config/signatureGenerator.js";
 
 //CHECKOUT E-SEWA
 export const checkout = async (req, res) => {

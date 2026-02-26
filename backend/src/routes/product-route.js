@@ -16,14 +16,14 @@ import {
 // Protected routes for vendors
 router.post("/", protect, validateProduct, allowRoles("vendor"), createProduct);
 router.get("/my-products", protect, allowRoles("vendor"), getMyProducts);
-router.put("/:id", protect, allowRoles("vendor"), updateProduct);
+router.patch("/:id", protect, allowRoles("vendor"), updateProduct);
 router.delete("/:id", protect, allowRoles("admin", "vendor"), deleteProduct);
 
 // Public routes
 router.get("/all-products", getAllProducts);
 router.get("/:id", getProductById);
 
-router.put(
+router.patch(
   "/:id/inactive",
   protect,
   allowRoles("admin,vendor"),

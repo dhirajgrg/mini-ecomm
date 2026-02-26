@@ -18,7 +18,7 @@ const startServer = () => {
       console.log(`server is listening on port : ${PORT}`);
     });
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Error failed to start server : ${error.message}`);
   }
 };
 

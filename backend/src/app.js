@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 //CUSTOM MODULES
 import AppError from "./utils/appError-util.js";
 import globalErrorHandler from "./controllers/globalError-controller.js";
-import esewaRoutes from "./routes/esewa-route.js";
+// import esewaRoutes from "./routes/esewa-route.js";
 import authRoutes from "./routes/auth-route.js";
 import storeRoutes from "./routes/store-route.js";
 import productRoutes from "./routes/product-route.js"

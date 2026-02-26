@@ -6,7 +6,7 @@ import storeModel from "../models/store-model.js";
 // Create a new product (Vendor only)
 export const createProduct = catchAsync(async (req, res, next) => {
   //create new product
-  const { title, description, price } = req.body;
+  const { title, description, price, stock = 0 } = req.body;
 
   if (!title || !description || !price) {
     next(new AppError("please provide all fields", 400));
@@ -14,10 +14,7 @@ export const createProduct = catchAsync(async (req, res, next) => {
 
   const store = await storeModel.findOne({ ownerId: req.user._id });
 
-  if (
-    req.user.role !== "vendor" ||
-    req.user._id.toString() !== store.ownerId.toString()
-  ) {
+  if (req.user.role !== "vendor" || !req.user._id.equals(store.ownerId)) {
     return next(
       new AppError("You are not authorized to create a product", 403),
     );
@@ -40,6 +37,7 @@ export const createProduct = catchAsync(async (req, res, next) => {
     title,
     description,
     price,
+    stock,
     storeId: store._id,
   });
 
@@ -77,6 +75,7 @@ export const getAllProducts = catchAsync(async (req, res, next) => {
   const products = await productModel.find().populate("storeId", "storeName");
   res.status(200).json({
     status: "success",
+    totalProducts:products.length,
     data: {
       products,
     },
@@ -102,7 +101,7 @@ export const getProductById = catchAsync(async (req, res, next) => {
 
 //UPDATE PRODUCT
 export const updateProduct = catchAsync(async (req, res, next) => {
-  const { title, description, price } = req.body;
+  const { title, description, price, stock } = req.body;
   const product = await productModel.findById(req.params.id);
   if (!product) {
     return next(new AppError("Product not found", 404));
@@ -119,7 +118,7 @@ export const updateProduct = catchAsync(async (req, res, next) => {
   }
   const updatedProduct = await productModel.findByIdAndUpdate(
     req.params.id,
-    { title, description, price },
+    { title, description, price, stock },
     { new: true },
   );
 

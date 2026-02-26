@@ -47,6 +47,7 @@ export const getAllStores = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
+    totalStore:stores.length,
     message: "All stores fetched successfully",
     data: {
       stores,
