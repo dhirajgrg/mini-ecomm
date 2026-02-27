@@ -3,21 +3,23 @@ import { protect, allowRoles } from "../middlewares/auth-middleware.js";
 import { validateStore } from "../middlewares/validate-middleware.js";
 import {
   createStore,
-  getMyStores,
+  getMyStore,
   getAllStores,
   approveStore,
   suspendStore,
+  deleteStore
 } from "../controllers/store-controller.js";
 
 const router = express.Router();
 
 // Vendor routes
-router.post("/", protect, validateStore, allowRoles("vendor"), createStore);
-router.get("/my", protect, allowRoles("vendor"), getMyStores);
+router.post("/",  validateStore,protect, allowRoles("vendor"), createStore);
+router.get("/", protect, allowRoles("vendor"), getMyStore);
 
 // Admin routes
-router.get("/", protect, allowRoles("admin"), getAllStores);
-router.patch("/:id/approve", protect, allowRoles("admin"), approveStore);
-router.patch("/:id/suspend", protect, allowRoles("admin"), suspendStore);
+router.get("/admin", protect, allowRoles("admin"), getAllStores);
+router.patch("/admin/:id/approve", protect, allowRoles("admin"), approveStore);
+router.patch("/admin/:id/suspend", protect, allowRoles("admin"), suspendStore);
+router.delete("/admin/:id", protect, allowRoles("admin"), deleteStore);
 
 export default router;

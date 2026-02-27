@@ -1,11 +1,9 @@
 import express from "express";
-const router = express.Router();
-
 import { validateProduct } from "../middlewares/validate-middleware.js";
 import { protect, allowRoles } from "../middlewares/auth-middleware.js";
 import {
   createProduct,
-  getMyProducts,
+  getVendorProducts,
   updateProduct,
   deleteProduct,
   getAllProducts,
@@ -13,20 +11,27 @@ import {
   updateProductInactive,
 } from "../controllers/product-controller.js";
 
-// Protected routes for vendors
-router.post("/", protect, validateProduct, allowRoles("vendor"), createProduct);
-router.get("/my-products", protect, allowRoles("vendor"), getMyProducts);
-router.patch("/:id", protect, allowRoles("vendor"), updateProduct);
-router.delete("/:id", protect, allowRoles("admin", "vendor"), deleteProduct);
+const router = express.Router();
 
-// Public routes
-router.get("/all-products", getAllProducts);
+/* ---------- Public Routes ---------- */
+
+router.get("/", getAllProducts);
 router.get("/:id", getProductById);
 
+/* ---------- Protected Routes ---------- */
+
+router.use(protect);
+
+// Vendor routes
+router.post("/", allowRoles("vendor"), validateProduct, createProduct);
+router.get("/vendor", allowRoles("vendor"), getVendorProducts);
+router.patch("/:id", allowRoles("vendor"), updateProduct);
+router.delete("/:id", allowRoles("vendor"), deleteProduct);
+
+// Admin + Vendor
 router.patch(
   "/:id/inactive",
-  protect,
-  allowRoles("admin,vendor"),
+  allowRoles("admin", "vendor"),
   updateProductInactive,
 );
 

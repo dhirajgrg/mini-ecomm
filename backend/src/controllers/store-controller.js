@@ -26,7 +26,7 @@ export const createStore = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getMyStores = catchAsync(async (req, res, next) => {
+export const getMyStore = catchAsync(async (req, res, next) => {
   const store = await storeModel.find({ ownerId: req.user._id });
   if (!store) next(new AppError(`No store found for this user`, 404));
 
@@ -47,7 +47,7 @@ export const getAllStores = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    totalStore:stores.length,
+    totalStore: stores.length,
     message: "All stores fetched successfully",
     data: {
       stores,
@@ -71,7 +71,6 @@ export const approveStore = catchAsync(async (req, res, next) => {
 });
 
 export const suspendStore = catchAsync(async (req, res, next) => {
-    
   const store = await storeModel.findById(req.params.id);
   if (!store) next(new AppError(`Store not found with this id`, 404));
 
@@ -84,5 +83,13 @@ export const suspendStore = catchAsync(async (req, res, next) => {
     data: {
       store,
     },
+  });
+});
+
+export const deleteStore = catchAsync(async (req, res, next) => {
+  const store = await storeModel.findByIdAndDelete(req.params.id);
+  res.status(200).json({
+    status: "success",
+    message: "successfully store has been deleted",
   });
 });

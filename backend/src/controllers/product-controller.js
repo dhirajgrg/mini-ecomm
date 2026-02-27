@@ -51,7 +51,7 @@ export const createProduct = catchAsync(async (req, res, next) => {
 });
 
 //GET VENDOR PRODUCTS
-export const getMyProducts = catchAsync(async (req, res, next) => {
+export const getProducts = catchAsync(async (req, res, next) => {
   const store = await storeModel.findOne({ ownerId: req.user._id });
 
   if (!store) {
@@ -67,6 +67,60 @@ export const getMyProducts = catchAsync(async (req, res, next) => {
     data: {
       products,
     },
+  });
+});
+
+//UPDATE PRODUCT
+export const updateProduct = catchAsync(async (req, res, next) => {
+  const { title, description, price, stock } = req.body;
+  const product = await productModel.findById(req.params.id);
+  if (!product) {
+    return next(new AppError("Product not found", 404));
+  }
+
+  const store = await storeModel.findById(product.storeId);
+  if (
+    req.user.role !== "vendor" ||
+    req.user._id.toString() !== store.ownerId.toString()
+  ) {
+    return next(
+      new AppError("You are not authorized to update this product", 403),
+    );
+  }
+  const updatedProduct = await productModel.findByIdAndUpdate(
+    req.params.id,
+    { title, description, price, stock },
+    { new: true },
+  );
+
+  res.status(200).json({
+    status: "success",
+    message: "product updated successfully",
+    data: {
+      product: updatedProduct,
+    },
+  });
+});
+
+//DELETE PRODUCT
+export const deleteProduct = catchAsync(async (req, res, next) => {
+  const product = await productModel.findById(req.params.id);
+  if (!product) {
+    return next(new AppError("Product not found", 404));
+  }
+  const store = await storeModel.findById(product.storeId);
+  if (
+    req.user.role !== "vendor" ||
+    req.user._id.toString() !== store.ownerId.toString()
+  ) {
+    return next(
+      new AppError("You are not authorized to delete this product", 403),
+    );
+  }
+  await productModel.findByIdAndDelete(req.params.id);
+  res.status(200).json({
+    status: "success",
+    message: "product deleted successfully",
   });
 });
 
@@ -149,59 +203,7 @@ export const getProductById = catchAsync(async (req, res, next) => {
   });
 });
 
-//UPDATE PRODUCT
-export const updateProduct = catchAsync(async (req, res, next) => {
-  const { title, description, price, stock } = req.body;
-  const product = await productModel.findById(req.params.id);
-  if (!product) {
-    return next(new AppError("Product not found", 404));
-  }
 
-  const store = await storeModel.findById(product.storeId);
-  if (
-    req.user.role !== "vendor" ||
-    req.user._id.toString() !== store.ownerId.toString()
-  ) {
-    return next(
-      new AppError("You are not authorized to update this product", 403),
-    );
-  }
-  const updatedProduct = await productModel.findByIdAndUpdate(
-    req.params.id,
-    { title, description, price, stock },
-    { new: true },
-  );
-
-  res.status(200).json({
-    status: "success",
-    message: "product updated successfully",
-    data: {
-      product: updatedProduct,
-    },
-  });
-});
-
-//DELETE PRODUCT
-export const deleteProduct = catchAsync(async (req, res, next) => {
-  const product = await productModel.findById(req.params.id);
-  if (!product) {
-    return next(new AppError("Product not found", 404));
-  }
-  const store = await storeModel.findById(product.storeId);
-  if (
-    req.user.role !== "vendor" ||
-    req.user._id.toString() !== store.ownerId.toString()
-  ) {
-    return next(
-      new AppError("You are not authorized to delete this product", 403),
-    );
-  }
-  await productModel.findByIdAndDelete(req.params.id);
-  res.status(200).json({
-    status: "success",
-    message: "product deleted successfully",
-  });
-});
 
 //ADMIN - UPDATE PRODUCT INACTIVE
 export const updateProductInactive = catchAsync(async (req, res, next) => {

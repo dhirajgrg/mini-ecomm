@@ -6,20 +6,24 @@ import {
   updateCartItems,
   removeCartItems,
   deleteCart,
-  getAllCarts,getSingleCart
+  getAllCarts,
+  getSingleCart,
 } from "../controllers/cart-controller.js";
 
 const router = express.Router();
 
-router.post("/create", protect, allowRoles("customer"), addToCart);
-router.get("/", protect, allowRoles("customer"), getCart);
+// All routes require authentication
+router.use(protect);
 
-router.patch("/:productId", protect, allowRoles("customer"), updateCartItems);
-router.delete("/:productId", protect, allowRoles("customer"), removeCartItems);
-router.delete("/", protect, allowRoles("customer"), deleteCart);
+// Customer routes
+router.get("/", allowRoles("customer"), getCart);
+router.post("/", allowRoles("customer"), addToCart);
+router.patch("/:productId", allowRoles("customer"), updateCartItems);
+router.delete("/:productId", allowRoles("customer"), removeCartItems);
+router.delete("/", allowRoles("customer"), deleteCart);
 
-//admin
-router.get("/all-carts",protect,allowRoles("admin"),getAllCarts)
-router.get("/:cartId/single-cart",protect,allowRoles("admin"),getSingleCart)
+// Admin routes
+router.get("/admin", allowRoles("admin"), getAllCarts);
+router.get("/admin/:cartId", allowRoles("admin"), getSingleCart);
 
 export default router;

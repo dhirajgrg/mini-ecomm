@@ -64,7 +64,7 @@ export const createOrder = catchAsync(async (req, res, next) => {
 });
 
 //get orders for user
-export const getOrder = catchAsync(async (req, res, next) => {
+export const getOrders = catchAsync(async (req, res, next) => {
   const orders = await orderModel.find({ customerId: req.user._id });
 
   if (!orders) return next(new AppError("No orders found", 404));
@@ -76,11 +76,18 @@ export const getOrder = catchAsync(async (req, res, next) => {
 
 //cancell order if status is pending
 export const cancellOrder = catchAsync(async (req, res, next) => {
+  const {orderId}=req.params
+
   const order = await orderModel.findOne({
-    customerId: req.user._id,
+    _id:orderId,
     status: "pending",
   });
   if (!order) return next(new AppError("Order not found", 404));
+
+if(!req.user._id.equals(order.customerId)){
+  return next(new AppError("you are not authorized "))
+}
+
   order.status = "cancelled";
   await order.save();
   res.status(200).json({ status: "success", data: { order } });
