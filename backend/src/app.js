@@ -14,7 +14,7 @@ import authRoutes from "./routes/auth-route.js";
 import storeRoutes from "./routes/store-route.js";
 import productRoutes from "./routes/product-route.js";
 import cartRoutes from "./routes/cart-routes.js";
-
+import orderRoutes from "./routes/order-route.js";
 
 //MIDDLEWARES
 app.use(morgan("dev"));
@@ -32,8 +32,7 @@ app.use("/api/v1/auths", authRoutes);
 app.use("/api/v1/stores", storeRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
-
-
+app.use("/api/v1/order", orderRoutes);
 
 //UNHANDLED ROUTES
 app.all(/.*/, (req, res, next) => {
