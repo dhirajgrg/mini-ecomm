@@ -19,8 +19,8 @@ export const checkout = async (req, res) => {
     product_code: "EPAYTEST",
     product_service_charge: 0,
     product_delivery_charge: 0,
-    success_url: "http://localhost:3000/api/v1/esewa/success",
-    failure_url: "http://localhost:3000/api/v1/esewa/failure",
+    success_url: `${req.protocol}://${req.get("host")}/api/v1/esewa/success`,
+    failure_url: `${req.protocol}://${req.get("host")}/api/v1/esewa/failure`,
     signed_field_names: "total_amount,transaction_uuid,product_code",
     signature: signature,
   };
