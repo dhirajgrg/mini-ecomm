@@ -1,13 +1,14 @@
-//CORE MODULES
 import express from "express";
-const app = express();
 
-//THIR-PARTY-MODULES
-import morgan from "morgan";
+import helmet from "helmet";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
+import mongoSanitizer from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
-//CUSTOM MODULES
 import AppError from "./utils/appError-util.js";
 import globalErrorHandler from "./controllers/globalError-controller.js";
 import authRoutes from "./routes/auth-route.js";
@@ -16,15 +17,30 @@ import productRoutes from "./routes/product-route.js";
 import cartRoutes from "./routes/cart-routes.js";
 import orderRoutes from "./routes/order-route.js";
 
+const app = express();
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP, please try again!",
+});
+
 //MIDDLEWARES
-app.use(morgan("dev"));
+app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use("/api", limiter);
+app.use(express.json({limit:'10kb'}));
+app.use(mongoSanitizer())
+app.use(xss())
+app.use(hpp())
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use(cookieParser());
 
 //CHECK ROUTES
 app.get("/", (req, res) => {
-  console.log(`Route is healthy`);
+  console.log(process.env.NODE_ENV)
 });
 
 //MAIN ROUTES

@@ -64,7 +64,7 @@ export const createOrder = catchAsync(async (req, res, next) => {
 });
 
 //get orders for user
-export const getOrders = catchAsync(async (req, res, next) => {
+export const getOrder = catchAsync(async (req, res, next) => {
   const orders = await orderModel.find({ customerId: req.user._id });
 
   if (!orders) return next(new AppError("No orders found", 404));
@@ -75,7 +75,7 @@ export const getOrders = catchAsync(async (req, res, next) => {
 });
 
 //cancell order if status is pending
-export const cancelOrder = catchAsync(async (req, res, next) => {
+export const cancellOrder = catchAsync(async (req, res, next) => {
   const order = await orderModel.findOne({
     customerId: req.user._id,
     status: "pending",
