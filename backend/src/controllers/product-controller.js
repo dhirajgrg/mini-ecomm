@@ -72,13 +72,63 @@ export const getMyProducts = catchAsync(async (req, res, next) => {
 
 //GET ALL PRODUCTS
 export const getAllProducts = catchAsync(async (req, res, next) => {
-  const products = await productModel.find().populate("storeId", "storeName");
+  // Query filters
+  const queryObj = {};
+
+  // text search on title or description
+  if (req.query.q) {
+    const q = req.query.q;
+    queryObj.$or = [
+      { title: { $regex: q, $options: "i" } },
+      { description: { $regex: q, $options: "i" } },
+    ];
+  }
+
+  // price range
+  if (req.query.minPrice || req.query.maxPrice) {
+    queryObj.price = {};
+    if (req.query.minPrice) queryObj.price.$gte = Number(req.query.minPrice);
+    if (req.query.maxPrice) queryObj.price.$lte = Number(req.query.maxPrice);
+  }
+
+  // store filter
+  if (req.query.storeId) queryObj.storeId = req.query.storeId;
+
+  // status (default active)
+  queryObj.status = req.query.status || "active";
+
+  let query = productModel.find(queryObj).populate("storeId", "storeName");
+
+  // fields selection
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    query = query.select(fields);
+  }
+
+  // sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
+
+  // pagination
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
+
+  const products = await query;
+  const totalProducts = await productModel.countDocuments(queryObj);
+
   res.status(200).json({
     status: "success",
-    totalProducts:products.length,
-    data: {
-      products,
-    },
+    page,
+    limit,
+    totalProducts,
+    results: products.length,
+    data: { products },
   });
 });
 

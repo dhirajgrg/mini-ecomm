@@ -10,7 +10,7 @@ export const protect = catchAsync(async (req, res, next) => {
   if (req.cookies.token) {
     token = req.cookies.token;
   } else if (req.headers.authorization?.startsWith("Bearer")) {
-    token = req.headers.authorization.split(" ")[1];
+    token = req.headers?.authorization.split(" ")[1];
   }
 
   if (!token) {
@@ -31,6 +31,13 @@ export const protect = catchAsync(async (req, res, next) => {
   if (!currentUser.isActive) {
     return next(new AppError("This user account is deactivated.", 401));
   }
+
+   if (currentUser.changedPasswordAfter(decoded.iat)) {
+     return res.status(401).json({
+       status: "fail",
+       message: "Password recently changed. Please log in again.",
+     });
+   }
 
   req.user = currentUser;
   next();

@@ -9,9 +9,13 @@ import sendEmail from "../utils/email-util.js";
 
 //REGISTER NEW-USER
 export const signupUser = catchAsync(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
-  if (!email || !password)
+  const { name, email, password, confirmPassword, role } = req.body;
+  if (!email || !password || !confirmPassword)
     next(new AppError(`Please provide email or password`, 400));
+
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(new AppError(`passwoed do not match`, 400));
+  }
 
   //CHECK USER EXISTS
   const existingUser = await userModel.findOne({ email });
@@ -52,14 +56,14 @@ export const signupUser = catchAsync(async (req, res, next) => {
 export const signinUser = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password)
-    next(new AppError(`Please provide valid email or password`, 400));
+    return next(new AppError(`Please provide valid email or password`, 400));
 
-  const user = await userModel.findOne({ email });
+  // fetch the user and include password for comparison
+  const user = await userModel.findOne({ email }).select("+password");
 
-  if (!user)
-    next(
-      new AppError(`User not register with this email please register!!`, 400),
-    );
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError(`Incorrect email or password`, 401));
+  }
 
   user.isActive = true;
   await user.save();
@@ -74,6 +78,9 @@ export const signinUser = catchAsync(async (req, res, next) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 24 * 60 * 60 * 1000,
   });
+
+  // hide password before sending response
+  user.password = undefined;
 
   //SEND RESPONSE AD JSON
   res.status(200).json({
@@ -162,6 +169,10 @@ export const forgetPassword = catchAsync(async (req, res, next) => {
 });
 
 export const resetPassword = catchAsync(async (req, res, next) => {
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(new AppError(`passwoed do not match`, 400));
+  }
+
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -179,17 +190,18 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   }
 
   user.password = req.body.password;
+  user.confirmPassword = req.body.confirmPassword;
+
   user.passwordResetToken = undefined;
   user.passwordResetTokenExpires = undefined;
 
-await user.save();
+  await user.save();
 
-const token = tokenGenerator({ id: user._id, role: user.role });
-
+  const token = tokenGenerator({ id: user._id, role: user.role });
 
   res.status(200).json({
     status: "success",
     message: "user password reset successfully!",
-    token
+    token,
   });
 });

@@ -2,8 +2,8 @@ import { body, validationResult } from "express-validator";
 import AppError from "../utils/appError-util.js";
 
 // VALIDATION MIDDLEWARES FOR REGISTER
-export const validateSignup= [
-    body("name")
+export const validateSignup = [
+  body("name")
     .trim()
     .notEmpty()
     .withMessage("Name is required")
@@ -24,6 +24,18 @@ export const validateSignup= [
     .withMessage("Password is required")
     .isLength({ min: 4 })
     .withMessage("Password must be at least 4 characters long"),
+  body("confirmPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Please confirm your password")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        // If they don't match, throw an error
+        throw new Error("Passwords do not match");
+      }
+      // If they match, return true
+      return true;
+    }),
   // 3. Catch Errors
   (req, res, next) => {
     const errors = validationResult(req);
