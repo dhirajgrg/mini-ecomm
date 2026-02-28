@@ -3,7 +3,7 @@ import { validateProduct } from "../middlewares/validate-middleware.js";
 import { protect, allowRoles } from "../middlewares/auth-middleware.js";
 import {
   createProduct,
-  getVendorProducts,
+  getProducts,
   updateProduct,
   deleteProduct,
   getAllProducts,
@@ -24,7 +24,7 @@ router.use(protect);
 
 // Vendor routes
 router.post("/", allowRoles("vendor"), validateProduct, createProduct);
-router.get("/vendor", allowRoles("vendor"), getVendorProducts);
+router.get("/", allowRoles("vendor"), getProducts);
 router.patch("/:id", allowRoles("vendor"), updateProduct);
 router.delete("/:id", allowRoles("vendor"), deleteProduct);
 

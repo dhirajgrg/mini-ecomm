@@ -75,7 +75,7 @@ export const getOrders = catchAsync(async (req, res, next) => {
 });
 
 //cancell order if status is pending
-export const cancellOrder = catchAsync(async (req, res, next) => {
+export const cancelOrder = catchAsync(async (req, res, next) => {
   const {orderId}=req.params
 
   const order = await orderModel.findOne({
