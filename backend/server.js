@@ -5,10 +5,8 @@ import "dotenv/config";
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
 
-
 //PORT
 const PORT = 3000 || process.env.PORT;
-
 
 //INITIATE SERVER
 const startServer = () => {
@@ -21,7 +19,6 @@ const startServer = () => {
     console.error(`Error failed to start server : ${error.message}`);
   }
 };
-
 
 //START SERVER
 startServer();

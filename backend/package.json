@@ -2,39 +2,38 @@
   "name": "backend",
   "type": "module",
   "version": "1.0.0",
-  "description": "",
+  "description": "A mini e-commerce food & delivery service app",
   "main": "server.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon server.js",
-    "prod": "cross-env NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js"
+    "prod": "cross-env NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "cross-env": "^10.1.0",
-    "crypto": "^1.0.1",
+    "dompurify": "^3.3.1",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1",
+    "express": "^4.18.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
     "express-validator": "^7.3.1",
     "helmet": "^8.1.0",
     "hpp": "^0.2.3",
+    "html-to-text": "^9.0.5",
+    "jsdom": "^28.1.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.2.1",
+    "mongoose": "^9.2.4",
     "nodemailer": "^8.0.1",
-    "uuid": "^13.0.0",
+    "pug": "^3.0.3",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "morgan": "^1.10.1",
-    "ndb": "^0.2.4",
     "nodemon": "^3.1.14"
   }
 }

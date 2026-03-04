@@ -5,7 +5,7 @@ import userModel from "../models/user-model.js";
 import catchAsync from "../utils/catchAsync-util.js";
 import AppError from "../utils/appError-util.js";
 import { tokenGenerator } from "../utils/jwt-util.js";
-import sendEmail from "../utils/email-util.js";
+import Email from "../utils/email-util.js";
 
 //REGISTER NEW-USER
 export const signupUser = catchAsync(async (req, res, next) => {
@@ -29,6 +29,17 @@ export const signupUser = catchAsync(async (req, res, next) => {
     password,
     role: role || "customer",
   });
+
+  //////////////////////////////////////////////////////////
+  //send email for creation user message
+  const url = `${req.protocol}://${req.get("host")}/api/v1/auths/me`;
+
+  try {
+    await new Email(newUser, url).sendWelcome();
+  } catch (err) {
+    // We don't want to stop the whole signup just because the email failed
+    console.error("Email could not be sent:", err);
+  }
 
   //TOKEN GENERATE FROM JWT
   const token = tokenGenerator({ id: newUser._id, role });
@@ -116,6 +127,7 @@ export const getMe = catchAsync(async (req, res, next) => {
   const currentUser = await userModel.findById(req.user.id);
 
   if (!currentUser) next(new AppError(`User not found with this id`, 404));
+  console.log(currentUser);
 
   res.status(200).json({
     status: "success",

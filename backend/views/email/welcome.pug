@@ -1,0 +1,52 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title= subject
+
+    style
+      include _style.css
+
+  body
+    table.body(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tr
+        td
+        td.container
+          .content
+            // START CENTERED WHITE CONTAINER
+            table.main(role='presentation')
+
+              // START MAIN CONTENT AREA
+              tr
+                td.wrapper
+                  table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                    tr
+                      td
+                        h2 Hi #{firstName},
+                        p Welcome to Hamro Mart, we're glad to have you 🎉🙏
+                        p We're a growing community of shoppers and sellers. To get started and make your profile look great, please upload a photo!
+                        
+                        //- The Button logic
+                        table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                          tbody
+                            tr
+                              td(align='left')
+                                table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                                  tbody
+                                    tr
+                                      td
+                                        a(href=`${url}`, target='_blank') Upload user photo
+                        
+                        p If you need any help with your first order, please don't hesitate to contact me!
+                        p - Dhiraj G., CEO
+            
+            // FOOTER
+            .footer
+              table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                tr
+                  td.content-block
+                    span.apple-link Hamro Mart Inc, Kathmandu, Nepal
+                    br
+                    |  Don't like these emails? 
+                    a(href='#') Unsubscribe
